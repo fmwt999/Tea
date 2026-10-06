@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Slider
+import androidx.compose.runtime.mutableFloatStateOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +46,8 @@ class MainActivity : ComponentActivity() {
 fun DemoScreen(modifier: Modifier = Modifier) {
     var Sum by remember { mutableStateOf("") }
     var Kol by remember { mutableStateOf("") }
+    var Tip by remember { mutableFloatStateOf(0f) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -73,6 +79,20 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             text = "Чаевые:",
             fontSize = 18.sp
         )
+        Slider(
+            value = Tip,
+            onValueChange = { Tip = it },
+            valueRange = 0f..25f,
+            steps = 24,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "0", fontSize = 16.sp)
+            Text(text = "25", fontSize = 16.sp)
+        }
         Spacer(Modifier.height(18.dp))
         Text(
             text = "Скидка:",
