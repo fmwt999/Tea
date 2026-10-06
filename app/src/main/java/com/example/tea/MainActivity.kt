@@ -27,6 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.RadioButton
+import androidx.compose.ui.semantics.Role
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.Alignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +52,8 @@ fun DemoScreen(modifier: Modifier = Modifier) {
     var Sum by remember { mutableStateOf("") }
     var Kol by remember { mutableStateOf("") }
     var Tip by remember { mutableFloatStateOf(0f) }
+    var disPerc by remember { mutableIntStateOf(3) }
+    val disOpt = listOf(3, 5, 7, 10)
 
     Column(
         modifier = modifier
@@ -93,11 +100,32 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             Text(text = "0", fontSize = 16.sp)
             Text(text = "25", fontSize = 16.sp)
         }
-        Spacer(Modifier.height(18.dp))
         Text(
             text = "Скидка:",
             fontSize = 24.sp
         )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            disOpt.forEach { percent ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.selectable(
+                        selected = disPerc == percent,
+                        onClick = { disPerc = percent },
+                        role = Role.RadioButton
+                    )
+                ) {
+                    RadioButton(
+                        selected = disPerc == percent,
+                        onClick = null
+                    )
+                    Text(text = "$percent%", fontSize = 18.sp)
+                }
+            }
+        }
     }
 }
 
