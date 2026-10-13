@@ -1,4 +1,4 @@
-package com.example.ycles
+package com.example.tea
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,22 +16,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.Slider
+import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Slider
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.RadioButton
 import androidx.compose.ui.semantics.Role
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.Alignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,40 +51,43 @@ fun DemoScreen(modifier: Modifier = Modifier) {
     var Sum by remember { mutableStateOf("") }
     var Kol by remember { mutableStateOf("") }
     var Tip by remember { mutableFloatStateOf(0f) }
-    var disPerc by remember { mutableIntStateOf(3) }
+
     val disOpt = listOf(3, 5, 7, 10)
+    val kolInt = Kol.toIntOrNull() ?: 0
+    val disPerc: Int = when {
+        kolInt <= 0 -> 3
+        kolInt in 1..2 -> 3
+        kolInt in 3..5 -> 5
+        kolInt in 6..10 -> 7
+        else -> 10
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        Text(
-            text = "Сумма заказа:",
-            fontSize = 18.sp,
-        )
+        Text(text = "Сумма заказа:", fontSize = 18.sp)
         OutlinedTextField(
             value = Sum,
             onValueChange = { newValue -> Sum = newValue },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(Modifier.height(18.dp))
-        Text(
-            text = "Количество блюд:",
-            fontSize = 18.sp
-        )
+
+        Text(text = "Количество блюд:", fontSize = 18.sp)
         OutlinedTextField(
             value = Kol,
             onValueChange = { newValue -> Kol = newValue },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(Modifier.height(18.dp))
-        Text(
-            text = "Чаевые:",
-            fontSize = 18.sp
-        )
+
+        Text(text = "Чаевые:", fontSize = 18.sp)
         Slider(
             value = Tip,
             onValueChange = { Tip = it },
@@ -100,10 +102,10 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             Text(text = "0", fontSize = 16.sp)
             Text(text = "25", fontSize = 16.sp)
         }
-        Text(
-            text = "Скидка:",
-            fontSize = 24.sp
-        )
+
+        Spacer(Modifier.height(18.dp))
+
+        Text(text = "Скидка:", fontSize = 24.sp)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -114,18 +116,30 @@ fun DemoScreen(modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.selectable(
                         selected = disPerc == percent,
-                        onClick = { disPerc = percent },
+                        onClick = {  },
                         role = Role.RadioButton
                     )
                 ) {
                     RadioButton(
                         selected = disPerc == percent,
-                        onClick = null
+                        onClick = null,
+                        enabled = false
                     )
                     Text(text = "$percent%", fontSize = 18.sp)
                 }
             }
         }
+
+        Spacer(Modifier.height(24.dp))
+
+        val sumVal = Sum.toDoubleOrNull() ?: 0.0
+        val tipAmount = sumVal * Tip / 100.0
+        val discountAmount = sumVal * disPerc / 100.0
+        val total = sumVal + tipAmount - discountAmount
+
+        Text(text = "Сумма чаевых: %.2f".format(tipAmount), fontSize = 18.sp)
+        Text(text = "Сумма скидки: %.2f".format(discountAmount), fontSize = 18.sp)
+        Text(text = "Итого к оплате: %.2f".format(total), fontSize = 20.sp)
     }
 }
 
